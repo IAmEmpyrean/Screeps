@@ -17,7 +17,7 @@ module.exports = {
             // if in home room
             if (creep.room.name == creep.memory.home) {
                 // find closest spawn, extension or tower which is not full
-                var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                var structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     // the second argument for findClosestByPath is an object which takes
                     // a property called filter which can be a function
                     // we use the arrow operator to define it

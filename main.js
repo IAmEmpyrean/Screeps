@@ -1,5 +1,6 @@
 // imports
 require('prototype.spawn')();
+require('prototype.tower');
 var roleMiner = require('role.Miner');
 var roleUpgrader = require('role.Upgrader');
 var roleConstructor = require('role.Constructor');
@@ -16,15 +17,15 @@ var HOME = 'W97S68';
 // setup some minimum numbers for different roles
     var minimumNumberOfMiners = 3;
     var minimumNumberOfUpgraders = 3;
-    var minimumNumberOfTransporters = 1;
-    var minimumNumberOfConstructors = 3;
+    var minimumNumberOfTransporters = 3;
+    var minimumNumberOfConstructors = 2;
     var minimumNumberOfRepairers = 2;
     var minimumNumberOfLongDistanceHarvestersW96S68 = 8;
     var minimumNumberOfLongDistanceHarvestersW97S67 = 8;
     var minimumNumberOfWallRepairers = 2;
     var minimumNumberOfLongDistanceHarvestersW98S68 = 8;
     var minimumNumberOfLongDistanceHarvestersW98S67 = 0;
-    var minimumNumberOfDefenders = 8;
+    var minimumNumberOfDefenders = 5;
     var minimumNumberOfAttackersW97S69 = 0;
 //---------
 
@@ -38,6 +39,13 @@ module.exports.loop = function () {
             // if not, delete the memory entry
             delete Memory.creeps[name];
         }
+    }
+        // find all towers
+    var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
+    // for each tower
+    for (let tower of towers) {
+        // run tower logic
+        tower.defend();
     }
 
     // for every creep name in Game.creeps

@@ -18,7 +18,7 @@ module.exports = {
         if (creep.memory.working == true) {
             // find all walls in the room
             var walls = creep.room.find(FIND_STRUCTURES, {
-                filter: (s) => (s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_RAMPART)
+                filter: (s) => (s.structureType == STRUCTURE_RAMPART || s.structureType == STRUCTURE_WALL)
             });
 
             var target = undefined;
