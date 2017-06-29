@@ -34,6 +34,10 @@ module.exports = {
         }
         // if creep is supposed to harvest energy from source
         else {
+             var structure = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+                    filter: (s) => (s.structureType == STRUCTURE_CONTAINER)
+                                 
+                });
             // find closest source
             var sources = creep.room.find(FIND_DROPPED_RESOURCES);
             var source = _.sortBy(sources, s => creep.pos.getRangeTo(s));
@@ -41,6 +45,10 @@ module.exports = {
             {
                 creep.moveTo(source[0]);
                 creep.pickup(source[0]);
+            }
+            else {
+                creep.moveTo(structure);
+                creep.withdraw(structure, RESOURCE_ENERGY);
             }
         }
     }

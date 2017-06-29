@@ -41,10 +41,16 @@ module.exports = {
             // find closest dropped energy
             var sources = creep.room.find(FIND_DROPPED_RESOURCES);
             var source = _.sortBy(sources, s => creep.pos.getRangeTo(s));
+            var containers = creep.room.find(STRUCTURE_CONTAINER)
+            var container = _.sortBy(containers, s => creep.pos.getRangeTo(s));
             if(source.length)
             {
                 creep.moveTo(source[0]);
                 creep.pickup(source[0]);
+            }
+            else{
+                creep.moveTo(container[0]);
+                creep.withdraw(container[0],RESOURCE_ENERGY);
             }
             
             

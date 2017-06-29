@@ -9,9 +9,27 @@ var roleWallRepairer = require('role.wallRepairer');
 var roleDefender = require('role.Defender');
 var roleBuilder = require('role.Builder');
 var roleTransporter = require('role.Transporter');
+var roleAttacker = require('role.Attacker');
 var HOME = 'W97S68';
 
+//----- minimums
+// setup some minimum numbers for different roles
+    var minimumNumberOfMiners = 3;
+    var minimumNumberOfUpgraders = 3;
+    var minimumNumberOfTransporters = 1;
+    var minimumNumberOfConstructors = 3;
+    var minimumNumberOfRepairers = 2;
+    var minimumNumberOfLongDistanceHarvestersW96S68 = 8;
+    var minimumNumberOfLongDistanceHarvestersW97S67 = 8;
+    var minimumNumberOfWallRepairers = 2;
+    var minimumNumberOfLongDistanceHarvestersW98S68 = 8;
+    var minimumNumberOfLongDistanceHarvestersW98S67 = 0;
+    var minimumNumberOfDefenders = 8;
+    var minimumNumberOfAttackersW97S69 = 0;
+//---------
+
 module.exports.loop = function () {
+    var Cuck = Game.spawns.DogeMeme.hits;// Initial spawn hp check
     var energy = Game.spawns.DogeMeme.room.energyCapacityAvailable;
     // check for memory entries of dead creeps by iterating over Memory.creeps
     for (let name in Memory.creeps) {
@@ -55,29 +73,14 @@ module.exports.loop = function () {
         else if (creep.memory.role == 'Defender') {
             roleDefender.run(creep);
         }
-        // if creep is Builder, call Builder script
-        else if (creep.memory.role == 'Builder') {
-            roleBuilder.run(creep);
-        }
         // if creep is wallRepairer, call wallRepairer script
         else if (creep.memory.role == 'wallRepairer') {
             roleWallRepairer.run(creep);
         }
+        else if (creep.memory.role == 'Attacker') {
+            roleAttacker.run(creep);
+        }
     }
-
-    // setup some minimum numbers for different roles
-    var minimumNumberOfMiners = 3;
-    var minimumNumberOfUpgraders = 2;
-    var minimumNumberOfTransporters = 3;
-    var minimumNumberOfConstructors = 2;
-    var minimumNumberOfRepairers = 1;
-    var minimumNumberOfLongDistanceHarvestersW96S68 = 7;
-    var minimumNumberOfLongDistanceHarvestersW97S67 = 7;
-    var minimumNumberOfWallRepairers = 1;
-    var minimumNumberOfDefenders = 3;
-    var minimumNumberOfLongDistanceHarvestersW98S68 = 6;
-    var minimumNumberOfLongDistanceHarvestersW98S67 = 0;
-    var minimumNumberOfBuilders = 0;
 
     // count the number of creeps alive for each role
     // _.sum will count the number of properties in Game.creeps filtered by the
@@ -98,7 +101,8 @@ module.exports.loop = function () {
         c.memory.role == 'longDistanceHarvester' && c.memory.target == 'W98S68');
     var numberOfLongDistanceHarvestersW98S67 = _.sum(Game.creeps, (c) =>
         c.memory.role == 'longDistanceHarvester' && c.memory.target == 'W98S67');
-    var numberOfBuilders = _.sum(Game.creeps, (c) => c.memory.role == 'Builder');
+    var numberOfAttackersW97S69 = _.sum(Game.creeps, (c) =>
+        c.memory.role == 'Attacker' && c.memory.target == 'W97S69');
     
     //default name
     var name = undefined;
@@ -106,7 +110,7 @@ module.exports.loop = function () {
     // if not enough Miners
     if (numberOfMiners < minimumNumberOfMiners) {
         // try to spawn one
-        name = Game.spawns.DogeMeme.createCustomCreep(energy, 'Miner');
+        name = Game.spawns.DogeMeme.createMiner(energy, 1);
             
     }
     // if not enough upgraders
@@ -147,26 +151,24 @@ module.exports.loop = function () {
         // try to spawn one
         name = Game.spawns.DogeMeme.createCustomCreep(energy, 'wallRepairer');
     }
-    // if not enough Defenders
-    else if (numberOfDefenders < minimumNumberOfDefenders) {
-        // try to spawn one
-        name = Game.spawns.DogeMeme.createDefender(energy, 4, HOME, 0);
-    }
     // if not enough longDistanceHarvesters for W98S68
     else if (numberOfLongDistanceHarvestersW98S68 < minimumNumberOfLongDistanceHarvestersW98S68) {
         // try to spawn one
-        name = Game.spawns.DogeMeme.createLongDistanceHarvester(energy, 3, HOME, 'W98S68', 0);
+        name = Game.spawns.DogeMeme.createLongDistanceHarvester(energy, 2, HOME, 'W98S68', 0);
     }
     // if not enough longDistanceHarvesters for W98S67
     else if (numberOfLongDistanceHarvestersW98S67 < minimumNumberOfLongDistanceHarvestersW98S67){
         // try to spawn one
         name = Game.spawns.DogeMeme.createLongDistanceHarvester(energy, 2, HOME, 'W98S67', 0);
     }
-    // if not enough Builders
-    else if (numberOfBuilders < minimumNumberOfBuilders) {
+    // if not enough Defenders
+    else if (numberOfDefenders < minimumNumberOfDefenders) {
         // try to spawn one
-        name = Game.spawns.DogeMeme.createCustomCreep(energy, 'Builder');
-          
+        name = Game.spawns.DogeMeme.createDefender(energy, 2, HOME, 0);
+    }
+    else if (numberOfAttackersW97S69 < minimumNumberOfAttackersW97S69){
+        // try to spawn one
+        name = Game.spawns.DogeMeme.createAttacker(energy, 7, HOME, 'W97S69', 0);
     }
 
     // print name to console if spawning was a success
@@ -179,7 +181,12 @@ module.exports.loop = function () {
         console.log("Number of Wall Repairers: " + numberOfWallRepairers);
         console.log("Number of Long Distance Miners: " + numberOfLDH + " W97S67: " + numberOfLongDistanceHarvestersW97S67 + " W96S68: " + numberOfLongDistanceHarvestersW96S68 + " W98S68: " + numberOfLongDistanceHarvestersW98S68 + " W98S67: " + numberOfLongDistanceHarvestersW98S67);
         console.log("Number of Defenders: " + numberOfDefenders);
-        console.log("Number of Builders: " + numberOfBuilders);
+        console.log("Number of Attackers: "+" W97S69: " + numberOfAttackersW97S69);
         console.log("Spawned new creep: " + name);
+    }
+    //Checks if you are getting cucked and automatically responds
+    if(Cuck < 5000){
+        Game.spawns.DogeMeme.room.controller.activateSafeMode;
+        Game.notify("You are getting cucked, anti cucker activation attempted. Get on asap");
     }
 };

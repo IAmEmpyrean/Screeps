@@ -78,6 +78,36 @@ module.exports = function() {
         };
         
         
+        StructureSpawn.prototype.createAttacker =
+        function (energy, numberOfWeapons, home, target, sourceIndex) {
+            // create a body with the specified number of TOUGH parts and one MOVE part per non-MOVE part
+            var body = [];
+            for (let i = 0; i < numberOfWeapons; i++) {
+                body.push(TOUGH);
+            }
+
+            
+            energy -= 10 * numberOfWeapons;
+
+            var numberOfParts = Math.floor(energy/130);
+            for (let i = 0; i < numberOfParts; i++) {
+                body.push(ATTACK);
+            }
+            for (let i = 0; i < numberOfParts; i++) {
+                body.push(MOVE);
+            }
+
+            // create creep with the created body
+            return this.createCreep(body, undefined, {
+                role: 'Attacker',
+                home: home,
+                target: target,
+                sourceIndex: sourceIndex,
+                working: false
+            });
+        };
+        
+        
         StructureSpawn.prototype.createMiner =
         function (energy, numberOfWorkParts) {
             // create a body with the specified number of WORK parts and one MOVE part per non-MOVE part
