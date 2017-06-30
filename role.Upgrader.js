@@ -32,8 +32,13 @@ module.exports = {
             {
                 creep.moveTo(source[0]);
                 creep.pickup(source[0]);
-
-        }
+            }
+            else{
+                var containers = creep.room.find(STRUCTURE_CONTAINER);
+                var container = _.sortBy(containers, s => creep.pos.getRangeTo(s));
+                creep.moveTo(container[0]);
+                creep.withdraw(container[0],RESOURCE_ENERGY);
+            }
     }
 }
 };

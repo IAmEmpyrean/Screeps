@@ -15,23 +15,22 @@ module.exports = {
         // if creep is supposed to deposit energy
         if (creep.memory.working == true) {
             // find closest depositable spot
-            var structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                // the second argument for findClosestByPath is an object which takes
-                // a property called filter which can be a function
-                // we use the arrow operator to define it
-                filter: (s) => (s.structureType == STRUCTURE_SPAWN
-                             || s.structureType == STRUCTURE_EXTENSION
-                             || s.structureType == STRUCTURE_TOWER
-                             || s.structureType == STRUCTURE_CONTAINER)
-                             && s.energy < s.energyCapacity
-            });
+            var structure = creep.room.find(FIND_STRUCTURES, {
+                    // the second argument for findClosestByPath is an object which takes
+                    // a property called filter which can be a function
+                    // we use the arrow operator to define it
+                    filter: (s) => ((s.structureType == STRUCTURE_SPAWN && s.energy < s.energyCapacity)
+                                 || (s.structureType == STRUCTURE_EXTENSION && s.energy < s.energyCapacity)
+                                 || (s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity)
+                                 || (s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] < 2000))
+                });
 
             // if we found one
-            if (structure != undefined) {
+            if (structure[0] != undefined) {
                 // try to transfer energy, if it is not in range
-                if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                if (creep.transfer(structure[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     // move towards it
-                    creep.moveTo(structure);
+                    creep.moveTo(structure[0]);
                 }
             }
             
@@ -41,14 +40,14 @@ module.exports = {
             // find closest dropped energy
             var sources = creep.room.find(FIND_DROPPED_RESOURCES);
             var source = _.sortBy(sources, s => creep.pos.getRangeTo(s));
-            var containers = creep.room.find(STRUCTURE_CONTAINER)
-            var container = _.sortBy(containers, s => creep.pos.getRangeTo(s));
             if(source.length)
             {
                 creep.moveTo(source[0]);
                 creep.pickup(source[0]);
             }
             else{
+                var containers = creep.room.find(STRUCTURE_CONTAINER);
+                var container = _.sortBy(containers, s => creep.pos.getRangeTo(s));
                 creep.moveTo(container[0]);
                 creep.withdraw(container[0],RESOURCE_ENERGY);
             }

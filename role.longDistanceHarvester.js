@@ -17,23 +17,23 @@ module.exports = {
             // if in home room
             if (creep.room.name == creep.memory.home) {
                 // find closest spawn, extension or tower which is not full
-                var structure = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                var structure = creep.room.find(FIND_STRUCTURES, {
                     // the second argument for findClosestByPath is an object which takes
                     // a property called filter which can be a function
                     // we use the arrow operator to define it
-                    filter: (s) => (s.structureType == STRUCTURE_SPAWN
-                                 || s.structureType == STRUCTURE_EXTENSION
-                                 || s.structureType == STRUCTURE_TOWER
-                                 || s.structureType == STRUCTURE_CONTAINER)
-                                 && s.energy < s.energyCapacity
+                    filter: (s) => ((s.structureType == STRUCTURE_SPAWN && s.energy < s.energyCapacity)
+                                 || (s.structureType == STRUCTURE_EXTENSION && s.energy < s.energyCapacity)
+                                 || (s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity)
+                                 || (s.structureType == STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] < s.storeCapacity[RESOURCE_ENERGY])
+                                 || (s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] < 2000))
                 });
 
                 // if we found one
-                if (structure != undefined) {
+                if (structure[0] != undefined) {
                     // try to transfer energy, if it is not in range
-                    if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    if (creep.transfer(structure[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                         // move towards it
-                        creep.moveTo(structure);
+                        creep.moveTo(structure[0]);
                     }
                 }
             }

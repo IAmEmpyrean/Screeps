@@ -1,5 +1,4 @@
 var roleUpgrader = require('role.Upgrader');
-
 module.exports = {
     // a function to run the logic for this role
     run: function(creep) {
@@ -46,9 +45,11 @@ module.exports = {
                 creep.moveTo(source[0]);
                 creep.pickup(source[0]);
             }
-            else {
-                creep.moveTo(structure);
-                creep.withdraw(structure, RESOURCE_ENERGY);
+            else{
+                var containers = creep.room.find(STRUCTURE_CONTAINER);
+                var container = _.sortBy(containers, s => creep.pos.getRangeTo(s));
+                creep.moveTo(container[0]);
+                creep.withdraw(container[0],RESOURCE_ENERGY);
             }
         }
     }

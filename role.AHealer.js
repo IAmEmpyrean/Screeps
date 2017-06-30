@@ -26,17 +26,16 @@ module.exports = {
         else {
             // if in target room
             if (creep.room.name == creep.memory.target) {
-                var enemy = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-                var eSpawn = creep.pos.findClosestByRange(FIND_HOSTILE_SPAWNS);
-                if(enemy){
-                    if(creep.attack(enemy) == ERR_NOT_IN_RANGE)
-                        creep.moveTo(enemy);
+                var allies = creep.room.find(FIND_MY_CREEPS, {
+                    // the second argument for findClosestByPath is an object which takes
+                    // a property called filter which can be a function
+                    // we use the arrow operator to define it
+                    filter: (s) => (s.hits < s.hitsMax)
+                });
+                if(allies[0]){
+                    if(creep.heal(allies[0]) == ERR_NOT_IN_RANGE)
+                        creep.moveTo(allies[0]);
             }
-                else if(eSpawn) {
-                    if(creep.attack(eSpawn) == ERR_NOT_IN_RANGE)
-                        creep.moveTo(eSpawn);
-                    
-                }
             else{
                 creep.moveTo(20,15)
             }

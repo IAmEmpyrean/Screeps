@@ -8,7 +8,7 @@ module.exports = {
             // switch state
             creep.memory.working = false;
         }
-        // if creep is harvesting energy but is full
+        // if creep is grabbing energy but is full
         else if (creep.memory.working == false && creep.carry.energy == creep.carryCapacity) {
             // switch state
             creep.memory.working = true;
@@ -48,7 +48,7 @@ module.exports = {
                     creep.moveTo(target);
                 }
             }
-            // if we can't fine one
+            // if we can't find one
             else {
                 // look for construction sites
                 roleConstructor.run(creep);
@@ -63,6 +63,12 @@ module.exports = {
             {
                 creep.moveTo(source[0]);
                 creep.pickup(source[0]);
+            }
+            else{
+                var containers = creep.room.find(STRUCTURE_CONTAINER);
+                var container = _.sortBy(containers, s => creep.pos.getRangeTo(s));
+                creep.moveTo(container[0]);
+                creep.withdraw(container[0],RESOURCE_ENERGY);
             }
         }
     }
